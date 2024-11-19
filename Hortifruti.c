@@ -682,4 +682,5 @@ void exibirProduto(Produtos *produto) {
     printf("Data de validade: %02d/%02d/%d\n", produto->validade.dia, produto->validade.mes, produto->validade.ano);
     printf("Fornecedor: %s\n", produto->fornecedor);
     printf("---------------------------------------------------------------------------------\n\n");
+    //ksjjkd
 }
