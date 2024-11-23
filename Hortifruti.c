@@ -46,7 +46,7 @@ typedef struct cadastro {
     int CodProduto;
     Data validade;
 } Produtos;
-//------------------------------------------vARIAVEIS MUNDIAIS-------------------------------------------
+//------------------------------------------vARIAVEIS GLOBAIS-------------------------------------------
 int men = 0;
 Produtos listaProdutos[MAX_PRODUTOS];
 int totalProdutos = 0;
@@ -65,6 +65,16 @@ const char* getNomeCategoria(Categoria tipo) {
             return "Desconhecido";
     }
 }
+const char* getNomeUnidade(UnidadeDeMedida unidade) {
+    switch (unidade) {
+        case KG: return "KG";
+        case UNIDADE: return "Unidade";
+        case PACOTE: return "Pacote";
+        case GRAMAS: return "Gramas";
+        default: return "Desconhecido";
+    }
+}
+
 
 void lerData(char* entrada, Data* data);
 
@@ -81,10 +91,16 @@ void listarP();
 void editarP();
 
 void exibirProduto(Produtos *produto);
+
+void SalvarArquivoCSV();
+
+void CarregarArquivoCSV(const char *BDados);
 //---------------------------------------CODIGO PRINCIPAL------------------------------------------------------
 
 int main(){
     clear();
+    const char *BDados = "BDados.csv";
+        CarregarArquivoCSV(BDados);
     while (men != 6){
         menu();
 
@@ -96,10 +112,13 @@ int main(){
         case 5:
             clear();
             printf("Saindo....");
+            SalvarArquivoCSV();
             Sleep(2000);
             clear();
-            return 1;
+            return 0;
         default:
+            printf("Opcao invalida. Tente novamente!\n");
+            Sleep(1500);
             break;
         }
     }
@@ -264,21 +283,7 @@ void cadastroProduto(){
             printf("Nome: %s\n", produto.nome);
             printf("Categoria: %s\n", getNomeCategoria(produto.tipo));
             printf("Quantidade em estoque: %d\n", produto.estoque);
-            printf("Unidade de medida: ");
-                switch (produto.unidadeDeMedida) {
-                    case KG:
-                        printf("KG\n");
-                        break;
-                    case UNIDADE:
-                        printf("Unidade\n");
-                        break;
-                    case PACOTE:
-                        printf("Pacote\n");
-                        break;
-                    case GRAMAS:
-                        printf("Gramas\n");
-                        break;
-                }
+            printf("Unidade de medida: %s\n", getNomeUnidade(produto.unidadeDeMedida));
             printf("\n--------------------------------------------\n\n");
             printf("Preco: R$ ");
             scanf("%f", &produto.preco);
@@ -289,21 +294,7 @@ void cadastroProduto(){
             printf("Nome: %s\n", produto.nome);
             printf("Categoria: %s\n", getNomeCategoria(produto.tipo));
             printf("Quantidade em estoque: %d\n", produto.estoque);
-            printf("Unidade de medida: ");
-                switch (produto.unidadeDeMedida) {
-                    case KG:
-                        printf("KG\n");
-                        break;
-                    case UNIDADE:
-                        printf("Unidade\n");
-                        break;
-                    case PACOTE:
-                        printf("Pacote\n");
-                        break;
-                    case GRAMAS:
-                        printf("Gramas\n");
-                        break;
-                }
+            printf("Unidade de medida: %s\n", getNomeUnidade(produto.unidadeDeMedida));
             printf("Preco: R$%.2f\n", produto.preco);
             printf("--------------------------------------------\n\n");
             printf("Data de validade: ");
@@ -316,21 +307,7 @@ void cadastroProduto(){
             printf("Nome: %s\n", produto.nome);
             printf("Categoria: %s\n", getNomeCategoria(produto.tipo));
             printf("Quantidade em estoque: %d\n", produto.estoque);
-            printf("Unidade de medida: ");
-                switch (produto.unidadeDeMedida) {
-                    case KG:
-                        printf("KG\n");
-                        break;
-                    case UNIDADE:
-                        printf("Unidade\n");
-                        break;
-                    case PACOTE:
-                        printf("Pacote\n");
-                        break;
-                    case GRAMAS:
-                        printf("Gramas\n");
-                        break;
-                }
+            printf("Unidade de medida: %s\n", getNomeUnidade(produto.unidadeDeMedida));
             printf("Preco: R$%.2f\n", produto.preco);
             printf("--------------------------------------------\n\n");
             printf("Fornecedor: ");
@@ -363,22 +340,7 @@ void cadastroProduto(){
     printf("Nome: %s\n", produto.nome);
     printf("Categoria: %s\n", getNomeCategoria(produto.tipo));
     printf("Quantidade em Estoque: %d\n", produto.estoque);
-    printf("Unidade de medida: ");
-    switch (produto.unidadeDeMedida) {
-    case KG:
-        printf("KG\n");
-        break;
-    case UNIDADE:
-        printf("Unidade\n");
-        break;
-    case PACOTE:
-        printf("Pacote\n");
-        break;
-    case GRAMAS:
-        printf("Gramas\n");
-        break;
-    }
-
+    printf("Unidade de medida: %s\n", getNomeUnidade(produto.unidadeDeMedida));
     printf("Preco: R$%.2f\n", produto.preco);
     printf("Data de validade: %02d/%02d/%d\n", produto.validade.dia, produto.validade.mes, produto.validade.ano);
     printf("Fornecedor: %s\n", produto.fornecedor);
@@ -458,13 +420,7 @@ void listarP(){
         printf("Nome: %s\n", listaProdutos[i].nome);
         printf("Categoria: %s\n", getNomeCategoria(listaProdutos[i].tipo));
         printf("Quantidade em Estoque: %d\n", listaProdutos[i].estoque);
-        printf("Unidade de medida: ");
-        switch (listaProdutos[i].unidadeDeMedida) {
-            case KG: printf("KG\n"); break;
-            case UNIDADE: printf("Unidade\n"); break;
-            case PACOTE: printf("Pacote\n"); break;
-            case GRAMAS: printf("Gramas\n"); break;
-        }
+        printf("Unidade de medida: %s\n", getNomeUnidade(listaProdutos[i].unidadeDeMedida));
         printf("Preco: R$%.2f\n", listaProdutos[i].preco);
         printf("Data de validade: %02d/%02d/%d\n", listaProdutos[i].validade.dia, listaProdutos[i].validade.mes, listaProdutos[i].validade.ano);
         printf("Fornecedor: %s\n", listaProdutos[i].fornecedor);
@@ -473,7 +429,6 @@ void listarP(){
     printf("Pressione enter para voltar para a tela inicial\n");
     getchar();
 }
-
 //-------------------------------------------------------------EDITAR PRODUTO----------------------------------------------------------------
 
 void editarP(){ 
@@ -682,4 +637,84 @@ void exibirProduto(Produtos *produto) {
     printf("Data de validade: %02d/%02d/%d\n", produto->validade.dia, produto->validade.mes, produto->validade.ano);
     printf("Fornecedor: %s\n", produto->fornecedor);
     printf("---------------------------------------------------------------------------------\n\n");
+}
+
+void SalvarArquivoCSV(){
+    char caminhoArquivo[260];
+    snprintf(caminhoArquivo, sizeof(caminhoArquivo),"BDados.csv");
+
+    FILE *arquivo = fopen(caminhoArquivo, "w");
+    if (arquivo == NULL){
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
+    }
+    
+    fprintf(arquivo, "Codigo;Nome;Categoria;Estoque;Preco;Unidade de Medida;Validade;Fornecedor\n");
+
+    for (int i = 0; i < totalProdutos; i++){
+        Produtos *produto = &listaProdutos[i];
+        fprintf(arquivo, "%d;%s;%d;%d;%.2f;%d;%02d/%02d/%04d;%s\n",
+                produto->CodProduto,
+                produto->nome,
+                produto->tipo,
+                produto->estoque,
+                produto->preco,
+                produto->unidadeDeMedida,
+                produto->validade.dia,
+                produto->validade.mes,
+                produto->validade.ano,
+                produto->fornecedor);
+
+    }
+    fclose(arquivo);
+    printf("Produtos salvos com sucesso no arquivo %s\n",caminhoArquivo);
+}
+
+void CarregarArquivoCSV(const char *BDados) {
+    FILE *arquivo = fopen(BDados, "r");
+    if (arquivo == NULL) {
+        printf("Arquivo '%s' não encontrado. Criando um novo...\n", BDados);
+        arquivo = fopen(BDados, "w");
+        if (arquivo == NULL){
+            printf("Erro ao criar o arquivo '%s'. Verifique as permissões.\n", BDados);
+            return;
+        }
+        fprintf(arquivo, "Codigo;Nome;Categoria;Estoque;Preco;Unidade de Medida;Validade;Fornecedor\n");
+        fclose(arquivo);
+        printf("Arquivo criado com sucesso: %s\n", BDados);
+        return;         
+    }
+
+    char linha[512];
+    fgets(linha, sizeof(linha), arquivo);
+
+    totalProdutos = 0;
+    while (fgets(linha, sizeof(linha), arquivo)){
+        if (totalProdutos >= MAX_PRODUTOS){
+            printf("Numero maximo de produtos (%d) atingidos.\n", MAX_PRODUTOS);
+            break;
+        }
+
+    Produtos *produto = &listaProdutos[totalProdutos];
+    int tipo, unidade;
+
+    sscanf(linha, "%d;%49[^;];%d;%d;%f;%d;%d/%d/%d;%49[^;\n]",
+            &produto->CodProduto,
+            produto->nome,
+            &tipo,
+            &produto->estoque,
+            &produto->preco,
+            &unidade,
+            &produto->validade.dia,
+            &produto->validade.mes,
+            &produto->validade.ano,
+            produto->fornecedor);
+
+    produto->tipo = (Categoria)tipo;
+    produto->unidadeDeMedida = (UnidadeDeMedida)unidade;
+
+    totalProdutos++;
+}
+    fclose(arquivo);
+    printf("Arquivo carregado com sucesso. Total de produtos: %d\n", totalProdutos);
 }
