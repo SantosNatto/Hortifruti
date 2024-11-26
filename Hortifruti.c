@@ -3,7 +3,9 @@
 #include <string.h>
 #include <windows.h>
 
+#define MAX_TRANSACOES 100
 #define MAX_PRODUTOS 100
+
 void clear() {
     #ifdef __linux__
         system("clear");
@@ -11,6 +13,7 @@ void clear() {
         system("cls");
     #endif
 }
+
 typedef enum {
     FRUTAS = 1,
     LEGUMES,
@@ -32,6 +35,13 @@ typedef struct Data {
     int ano;
 } Data;
 //---------------------------------------------ESTRUTURA DE CADASTRO--------------------------------------
+typedef struct {
+    char descricao[100];
+    float valor;
+    char tipo; // 'E' para entrada, 'S' para saída
+} Transacao;
+
+
 void UnidadeMedida();
 
 typedef struct cadastro {
@@ -50,6 +60,8 @@ typedef struct cadastro {
 int men = 0;
 Produtos listaProdutos[MAX_PRODUTOS];
 int totalProdutos = 0;
+int totalTransacoes = 0;
+Transacao listaTransacoes[MAX_TRANSACOES];
 //------------------------------------------------FUNÇÕES------------------------------------------------
 const char* getNomeCategoria(Categoria tipo) {
     switch (tipo) {
@@ -95,12 +107,23 @@ void exibirProduto(Produtos *produto);
 void SalvarArquivoCSV();
 
 void CarregarArquivoCSV(const char *BDados);
+
+void registrarTransacao();
+
+void exibirTransacoes();
+
+void salvarTransacoes();
+
+void carregarTransacoes();
+
+void menuFluxoCaixa();
 //---------------------------------------CODIGO PRINCIPAL------------------------------------------------------
 
 int main(){
     clear();
     const char *BDados = "BDados.csv";
         CarregarArquivoCSV(BDados);
+        carregarTransacoes();
     while (men != 6){
         menu();
 
@@ -109,10 +132,14 @@ int main(){
         case 1:
             menuProdutos();
             break;
+        case 2:
+            menuFluxoCaixa();
+            break;
         case 5:
             clear();
             printf("Saindo....");
             SalvarArquivoCSV();
+            salvarTransacoes();
             Sleep(2000);
             clear();
             return 0;
@@ -717,4 +744,141 @@ void CarregarArquivoCSV(const char *BDados) {
 }
     fclose(arquivo);
     printf("Arquivo carregado com sucesso. Total de produtos: %d\n", totalProdutos);
+}
+
+// Funções para manipular o fluxo de caixa
+void registrarTransacao() {
+    clear();
+    if (totalTransacoes >= MAX_TRANSACOES) {
+        printf("Limite de transacoes atingido!\n");
+        return;
+    }
+
+    Transacao novaTransacao;
+    printf("Descricao da transacao: ");
+    getchar(); // Consumir caractere pendente
+    fgets(novaTransacao.descricao, sizeof(novaTransacao.descricao), stdin);
+    novaTransacao.descricao[strcspn(novaTransacao.descricao, "\n")] = '\0';
+
+    printf("Valor: ");
+    scanf("%f", &novaTransacao.valor);
+
+    printf("Tipo ('E' para entrada, 'S' para saida): ");
+    getchar();
+    scanf(" %c", &novaTransacao.tipo);
+
+    listaTransacoes[totalTransacoes] = novaTransacao;
+    totalTransacoes++;
+
+    printf("\nTransacao registrada com sucesso!\n");
+    Sleep(1000);
+    clear();
+}
+
+void exibirTransacoes() {
+    clear();
+    if (totalTransacoes == 0) {
+        printf("Nenhuma transacao registrada.\n");
+        return;
+    }
+
+    printf("----- Transacoes -----\n");
+    float saldo = 0;
+    for (int i = 0; i < totalTransacoes; i++) {
+        Transacao t = listaTransacoes[i];
+        printf("%d. %s - R$%.2f - %s\n", i + 1, t.descricao, t.valor, t.tipo == 'E' ? "Entrada" : "Saida");
+        saldo += (t.tipo == 'E' ? t.valor : -t.valor);
+    }
+    printf("\n----------------------\n");
+    printf("Saldo atual: R$%.2f\n", saldo);
+    printf("\n----------------------\n");
+    printf("\nPressione enter para continuar");
+    getchar();
+    getchar();
+    clear();
+}
+
+void salvarTransacoes() {
+    FILE *arquivo = fopen("FluxoCaixa.csv", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao salvar transacoes.\n");
+        return;
+    }
+
+    fprintf(arquivo, "Descricao;Valor;Tipo\n");
+    for (int i = 0; i < totalTransacoes; i++) {
+        Transacao t = listaTransacoes[i];
+        fprintf(arquivo, "%s;%.2f;%c\n", t.descricao, t.valor, t.tipo);
+    }
+
+    fclose(arquivo);
+    printf("\nTransacoes salvas com sucesso!\n");
+    Sleep(1000);
+    clear();
+}
+
+void carregarTransacoes() {
+    clear();
+    FILE *arquivo = fopen("FluxoCaixa.csv", "r");
+    if (arquivo == NULL) {
+        printf("Nenhum arquivo de transacoes encontrado. Criando um novo...\n");
+        return;
+    }
+
+    char linha[200];
+    fgets(linha, sizeof(linha), arquivo); // Ignorar cabeçalho
+
+    totalTransacoes = 0;
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (totalTransacoes >= MAX_TRANSACOES) {
+            printf("Limite de transacoes atingido!\n");
+            break;
+        }
+
+        Transacao novaTransacao;
+        char tipo;
+        sscanf(linha, "%99[^;];%f;%c", novaTransacao.descricao, &novaTransacao.valor, &tipo);
+        novaTransacao.tipo = tipo;
+        listaTransacoes[totalTransacoes++] = novaTransacao;
+    }
+
+    fclose(arquivo);
+    printf("Transacoes carregadas com sucesso!\n");
+}
+
+void menuFluxoCaixa() {
+    clear();
+    int opcao;
+    do {
+        printf("----- Menu Fluxo de Caixa -----\n");
+        printf("1. Registrar transacao\n");
+        printf("2. Exibir transacoes\n");
+        printf("3. Salvar transacoes\n");
+        printf("4. Carregar transacoes\n");
+        printf("5. Voltar ao menu principal\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                registrarTransacao();
+                break;
+            case 2:
+                exibirTransacoes();
+                break;
+            case 3:
+                salvarTransacoes();
+                break;
+            case 4:
+                carregarTransacoes();
+                break;
+            case 5:
+                printf("Voltando ao menu principal...\n");
+                Sleep(1000);
+                clear();
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 5);
 }
