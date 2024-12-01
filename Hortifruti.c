@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
+#include <ctype.h>
 
 #define MAX_TRANSACOES 100
 #define MAX_PRODUTOS 100
@@ -34,11 +36,24 @@ typedef struct Data {
     int mes;
     int ano;
 } Data;
+
+Data obterDataAtual() {
+    Data dataAtual;
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    dataAtual.dia = tm.tm_mday;
+    dataAtual.mes = tm.tm_mon + 1;
+    dataAtual.ano = tm.tm_year + 1900;
+
+    return dataAtual;
+}
 //---------------------------------------------ESTRUTURA DE CADASTRO--------------------------------------
 typedef struct {
     char descricao[100];
     float valor;
     char tipo; // 'E' para entrada, 'S' para saída
+    Data data;
 } Transacao;
 
 
@@ -117,6 +132,8 @@ void salvarTransacoes();
 void carregarTransacoes();
 
 void menuFluxoCaixa();
+
+void registrarDoacao();
 //---------------------------------------CODIGO PRINCIPAL------------------------------------------------------
 
 int main(){
@@ -134,6 +151,9 @@ int main(){
             break;
         case 2:
             menuFluxoCaixa();
+            break;
+        case 4:
+            registrarDoacao();
             break;
         case 5:
             clear();
@@ -767,6 +787,21 @@ void registrarTransacao() {
     getchar();
     scanf(" %c", &novaTransacao.tipo);
 
+    // Tratamento da data (aceita dd/mm/AAAA ou ddmmaaaa)
+    char dataEntrada[11]; // Considera data no formato dd/mm/aaaa ou ddmmaaaa
+    printf("Data da transacao (dd/mm/AAAA ou ddmmaaaa): ");
+    getchar(); // Limpar o buffer de entrada
+    fgets(dataEntrada, sizeof(dataEntrada), stdin);
+    dataEntrada[strcspn(dataEntrada, "\n")] = '\0';  // Remove o '\n'
+
+    // Usa a função lerData para processar a data
+    lerData(dataEntrada, &novaTransacao.data);
+
+    if (novaTransacao.data.dia == -1 || novaTransacao.data.mes == -1 || novaTransacao.data.ano == -1) {
+        printf("Data invalida! Transacao nao registrada.\n");
+        return;
+    }
+
     listaTransacoes[totalTransacoes] = novaTransacao;
     totalTransacoes++;
 
@@ -784,11 +819,16 @@ void exibirTransacoes() {
 
     printf("----- Transacoes -----\n");
     float saldo = 0;
+
     for (int i = 0; i < totalTransacoes; i++) {
         Transacao t = listaTransacoes[i];
-        printf("%d. %s - R$%.2f - %s\n", i + 1, t.descricao, t.valor, t.tipo == 'E' ? "Entrada" : "Saida");
-        saldo += (t.tipo == 'E' ? t.valor : -t.valor);
+        printf("%d. %s - R$%.2f - %s - Data: %02d/%02d/%04d\n", i + 1, t.descricao, t.valor, 
+        (tolower(t.tipo) == 'e') ? "Entrada" : "Saida", 
+        t.data.dia, t.data.mes, t.data.ano);
+
+        saldo += (tolower(t.tipo) == 'e' ? t.valor : -t.valor);
     }
+
     printf("\n----------------------\n");
     printf("Saldo atual: R$%.2f\n", saldo);
     printf("\n----------------------\n");
@@ -883,3 +923,77 @@ void menuFluxoCaixa() {
     } while (opcao != 5);
 }
 
+void registrarDoacao() {
+    clear();
+
+    // Perguntar pelo produto a ser doado
+    int codigoProduto;
+    printf("Digite o codigo do produto a ser doado: ");
+    scanf("%d", &codigoProduto);
+
+    // Buscar o produto com o código fornecido
+    Produtos *produtoDoado = NULL;
+    for (int i = 0; i < totalProdutos; i++) {
+        if (listaProdutos[i].CodProduto == codigoProduto) {
+            produtoDoado = &listaProdutos[i];
+            break;
+        }
+    }
+
+    if (produtoDoado == NULL) {
+        printf("Produto não encontrado.\n");
+        Sleep(1500);
+        return;
+    }
+
+    // Exibir as informações do produto
+    printf("\nProduto encontrado:\n");
+    printf("Nome: %s\n", produtoDoado->nome);
+    printf("Quantidade no estoque: %d\n", produtoDoado->estoque);
+    printf("Data de validade: %d/%d/%d\n", produtoDoado->validade.dia, produtoDoado->validade.mes, produtoDoado->validade.ano);
+    printf("Preco unitario: R$ %.2f\n", produtoDoado->preco);
+    printf("\n----------------------\n");
+
+    // Perguntar a quantidade a ser doada
+    int quantidadeDoada;
+    printf("Digite a quantidade a ser doada: ");
+    scanf("%d", &quantidadeDoada);
+
+    if (quantidadeDoada > produtoDoado->estoque) {
+        printf("Quantidade excede o estoque disponível.\n");
+        Sleep(1500);
+        return;
+    }
+
+    // Calcular o valor da doação com base na quantidade
+    float valorDoacao = produtoDoado->preco * quantidadeDoada;
+    printf("Valor da doacao: R$ %.2f\n", valorDoacao);
+
+    // Atualizar o estoque do produto
+    produtoDoado->estoque -= quantidadeDoada;
+
+    // Registrar a transação de doação no fluxo de caixa
+    Transacao novaTransacao;
+    printf("Descricao da doacao: ");
+    getchar(); // Consumir caractere pendente
+    fgets(novaTransacao.descricao, sizeof(novaTransacao.descricao), stdin);
+    novaTransacao.descricao[strcspn(novaTransacao.descricao, "\n")] = '\0';
+
+    // Atribuindo o valor da doação calculado à transação
+    novaTransacao.valor = valorDoacao;
+
+    // Atribuindo a data atual à transação
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    novaTransacao.data.dia = tm.tm_mday;
+    novaTransacao.data.mes = tm.tm_mon + 1;
+    novaTransacao.data.ano = tm.tm_year + 1900;
+
+    novaTransacao.tipo = 'S'; // Doação é uma saída de dinheiro
+    listaTransacoes[totalTransacoes] = novaTransacao;
+    totalTransacoes++;
+
+    printf("\nDoacao registrada com sucesso!\n");
+    Sleep(1500);
+    clear();
+}
