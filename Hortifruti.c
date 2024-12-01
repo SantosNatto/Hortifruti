@@ -845,10 +845,11 @@ void salvarTransacoes() {
         return;
     }
 
-    fprintf(arquivo, "Descricao;Valor;Tipo\n");
+    fprintf(arquivo, "Descricao;Valor;Tipo;Data\n");
     for (int i = 0; i < totalTransacoes; i++) {
         Transacao t = listaTransacoes[i];
-        fprintf(arquivo, "%s;%.2f;%c\n", t.descricao, t.valor, t.tipo);
+        fprintf(arquivo, "%s;%.2f;%c;%02d/%02d/%04d\n", t.descricao, t.valor, t.tipo,
+                t.data.dia, t.data.mes, t.data.ano);
     }
 
     fclose(arquivo);
@@ -876,9 +877,18 @@ void carregarTransacoes() {
         }
 
         Transacao novaTransacao;
+        int dia, mes, ano;
         char tipo;
-        sscanf(linha, "%99[^;];%f;%c", novaTransacao.descricao, &novaTransacao.valor, &tipo);
+
+        sscanf(linha, "%99[^;];%f;%c;%d/%d/%d", novaTransacao.descricao, &novaTransacao.valor, 
+        &tipo, &dia, &mes, &ano);
         novaTransacao.tipo = tipo;
+
+        novaTransacao.tipo = tipo;
+        novaTransacao.data.dia = dia;
+        novaTransacao.data.mes = mes;
+        novaTransacao.data.ano = ano;
+
         listaTransacoes[totalTransacoes++] = novaTransacao;
     }
 
