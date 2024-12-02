@@ -152,6 +152,9 @@ int main(){
         case 2:
             menuFluxoCaixa();
             break;
+        case 3:
+            listarP();
+            break;
         case 4:
             registrarDoacao();
             break;
