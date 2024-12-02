@@ -1,0 +1,83 @@
+[33mcommit a046bfaf20b80137da98971bd769e0abb81933f3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Anthony <bistocchi.anthony@gmail.com>
+Date:   Mon Dec 2 14:04:58 2024 -0300
+
+    Gerenciamento de estoque
+
+[33mcommit aeace44b1039e0ca9e752efa2cfeea5d5783a2d3[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature3.0[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Sun Dec 1 13:22:59 2024 -0300
+
+    Função de data no mdulo de Fluxo Caixa acrescentada e arrumada
+
+[33mcommit 40237600e00c37502a4654e8cef7d3fcd9f428af[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Sun Dec 1 12:45:32 2024 -0300
+
+    Modulo de relatorio de ajuda a comunidade integrado ao sistema
+
+[33mcommit 63bd3e896c74c0d14bb76c6bf7ef8ebc7e577687[m
+Author: alandias88 <diasa3263@gmail.com>
+Date:   Sat Nov 30 19:38:32 2024 -0300
+
+    teste3.0
+
+[33mcommit c50a299019070aa1f2bc87ef3f516cf07d7d5ffa[m
+Merge: 99c9bf4 91233ae
+Author: Renato Santos <renatosanttosoficial@gmail.com>
+Date:   Tue Nov 26 14:38:30 2024 -0300
+
+    Merge pull request #2 from SantosNatto/feature2.0
+    
+    Modulo Fluxo de caixa adicionado ao codigo
+
+[33mcommit 91233aef986eb328f9784af3ef8ea544a7feaf8e[m[33m ([m[1;31morigin/feature2.0[m[33m)[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Tue Nov 26 14:33:35 2024 -0300
+
+    Modulo Fluxo de caixa adicionado ao codigo
+
+[33mcommit 99c9bf4703354e3fa6354de9eb06962b384e5042[m
+Merge: 72cb355 a726c3a
+Author: Renato Santos <renatosanttosoficial@gmail.com>
+Date:   Sat Nov 23 17:44:55 2024 -0300
+
+    Merge pull request #1 from SantosNatto/Main
+    
+    Main
+
+[33mcommit a726c3a522512a22cda5698892a1143eb007a604[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Sat Nov 23 17:05:54 2024 -0300
+
+    Funções para salvar os dados em arquivo .csv adicionadas
+
+[33mcommit 72cb355928003b0c9f5f6c51d75f1c7690d0821b[m
+Author: Renato Santos <renatosanttosoficial@gmail.com>
+Date:   Wed Nov 20 17:57:49 2024 -0300
+
+    Update README.md
+
+[33mcommit 9c299a08a418a5536f00c6ef309f66752395272c[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Wed Nov 20 17:39:19 2024 -0300
+
+    Nenhuma mudança
+
+[33mcommit 026a0b2c888d8fef216ca4439c4272209e190719[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Tue Nov 19 16:05:46 2024 -0300
+
+    Atualização da feature2.0
+
+[33mcommit 7cdeb00c6d3b6b081260d6ff45dcfc735f16548a[m
+Author: SantosNatto <renatosanttosoficial@gmail.com>
+Date:   Tue Nov 19 15:50:29 2024 -0300
+
+    Primeiro commit
+
+[33mcommit 7a73d347315c842dc602dfd4b519519588e0cd6a[m
+Author: Renato Santos <renatosanttosoficial@gmail.com>
+Date:   Tue Nov 19 15:25:50 2024 -0300
+
+    Initial commit
